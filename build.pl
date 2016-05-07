@@ -6,8 +6,8 @@ my $catlogfile = 'Table1_complete.txt';
 
 
 chdir '../';
-open(DIR, "> ./directories") or die "Could not open file 'directories' $!";
-open(LOG, "> ./build.txt") or die "Could not open file 'build.txt' $!";
+open(DIR, '> ./directories') or die "Could not open file 'directories' $!";
+open(LOG, '> ./build.txt') or die "Could not open file 'build.txt' $!";
 # 运行时间写入日志文件
 my ($date) = `date`;
 print LOG $date;
