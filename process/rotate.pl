@@ -22,26 +22,20 @@ open(SAC, "|sac") or die "Error in opening sac\n";
 foreach my $key (keys %sets) {
     my ($E, $N, $Z, $R, $T, $Z0);
 
-    # 检查Z分量是否存在
+    # 检查三个分量是否都存在,任一分量若不存在，则跳过
     $Z = "${key}Z.SAC";
-    if (!-e $Z) {  # 若不存在，则删除该台站的所有数据
-        warn "Vertical component missing!\n";
-        unlink glob "$key?.SAC";
-        print LOG "\n#. $key?.SAC因为Z分量没有，而被删除";
-        next;
+    $E = "${key}Z.SAC";
+    $N = "${key}N.SAC";
+    if (!-e $Z) {
+        print LOG "\n#. $key?.SAC Z分量没有";
     }
-
-    # 检查水平分量是否存在
-    if (-e "${key}E.SAC" and -e "${key}N.SAC") {   # E和N分量
-        $E = "${key}E.SAC";
-        $N = "${key}N.SAC";
-    } elsif (-e "${key}1.SAC" and -e "${key}2.SAC") {  # 1和2分量
-        $E = "${key}1.SAC";
-        $N = "${key}2.SAC";
-    } else {   # 水平分量缺失
-        warn "Horizontal components missing!\n";
-        unlink glob "$key?.SAC";
-        print LOG "\n#. $key?.SAC因为水平分量没有，而被删除";
+    if (!-e $E) {
+        print LOG "\n#. $key?.SAC E分量没有";
+    }
+    if (!-e $N) {
+        print LOG "\n#. $key?.SAC N分量没有";
+    }
+    if ((!-e $Z) or (!-e $E) or (!-e $N)){
         next;
     }
 
@@ -70,10 +64,11 @@ foreach my $key (keys %sets) {
     print SAC "w $R $T \n";
     print SAC "r $Z \n";
     print SAC "w $Z0 \n";
+
+    unlink glob "${key}[NEZ].SAC";
 }
 print SAC "q\n";
 close(SAC);
-unlink glob "*.SAC";
 
 print LOG "\n$0正常结束"; 
 close(LOG);
