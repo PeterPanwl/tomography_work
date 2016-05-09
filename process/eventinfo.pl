@@ -33,58 +33,6 @@ print SAC "ch evlo $evlo evla $evla evdp $evdp mag $mag\n";
 print SAC "wh\n";
 print SAC "q\n";
 close(SAC);
-# 标记直达纵波到时
-foreach (glob("*.SAC")) {
-    chomp;
-    my (undef, $stla, $stlo) = split /\s+/, `saclst stla stlo f $_`;
-    my $taup = "taup_time -mod prem -P,p -h $evdp -sta $stla $stlo -evt $evla $evlo";
-    my ($time1, $time2) = split /\s+/, `$taup`;
-    my $time;
-    if (defined($time1) and defined($time2)) {
-        $time = min($time1, $time2);
-    } elsif(defined($time1)) {
-        $time = $time1;
-    } elsif(defined($time2)) {
-        $time = $time2;
-    }
-    if (defined($time)) {
-        open(SAC, "| sac") or die "Error in opening SAC\n";
-        print SAC "wild echo off\n";
-        print SAC "r $_\n";
-        print SAC "ch t8 $time\n";
-        print SAC "wh\n";
-        print SAC "q\n";
-        close(SAC);
-    }else{
-        print LOG "$_ 标记理论到时时: $taup 没有返回有效结果\n";
-    }
-}
-# 标记直达横波到时
-oreach (glob("*.SAC")) {
-    chomp;
-    my (undef, $stla, $stlo) = split /\s+/, `saclst stla stlo f $_`;
-    my $taup = "taup_time -mod prem -S,s -h $evdp -sta $stla $stlo -evt $evla $evlo";
-    my ($time1, $time2) = split /\s+/, `$taup`;
-    my $time;
-    if (defined($time1) and defined($time2)) {
-        $time = min($time1, $time2);
-    } elsif(defined($time1)) {
-        $time = $time1;
-    } elsif(defined($time2)) {
-        $time = $time2;
-    }
-    if (defined($time)) {
-        open(SAC, "| sac") or die "Error in opening SAC\n";
-        print SAC "wild echo off\n";
-        print SAC "r $_\n";
-        print SAC "ch t8 $time\n";
-        print SAC "wh\n";
-        print SAC "q\n";
-        close(SAC);
-    }else{
-        print LOG "$_ 标记理论到时时: $taup 没有返回有效结果\n";
-    }
-}
 
 print LOG "\n$0正常结束"; 
 close(LOG);
