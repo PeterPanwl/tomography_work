@@ -13,13 +13,16 @@ print LOG "\n\n## $0";
 my %station;
 foreach (glob "*.SAC") {
     my ($net, $sta) = split /\./;
-    my (undef $stla, $stlo, $evla, $evlo, $evdp) = split /\s+/;
+    my (undef, $stla, $stlo, $evla, $evlo, $evdp) = split /\s+/, `saclst stla stlo evla evlo evdp f $_`;
     $station{"$net.$sta"} = "-sta $stla $stlo -evt $evla $evlo -h $evdp --time";
 }
 
 # 标记直达纵波到时
+open(SAC, "| sac") or die "Error in opening SAC\n";
+print SAC "wild echo off\n";
 foreach my $key (keys %station) {
     my ($p, $s, $pn);
+    my $taup;
     # 要考察的震相是P p Pn S s
     my %phase = (
             P => undef,
@@ -30,8 +33,8 @@ foreach my $key (keys %station) {
     );
     # 计算震相
     foreach (keys %phase) {
-        my $taup = "taup_time -mod prem -ph $_ $station{$keys}";
-        $phase{$_} = `$taup`;
+        $taup = "taup_time -mod prem -ph $_ $station{$key}";
+        ($phase{$_}) = split /\s+/, `$taup`;
         if ("A$phase{$_}" eq 'A') {
             $phase{$_} = 0;
         }
@@ -44,7 +47,7 @@ foreach my $key (keys %station) {
     }elsif ($phase{p} != 0) {
         $p = $phase{p};
     }else{
-        print LOG "$keys 标记理论P p到时时: $taup 没有返回有效结果\n";
+        print LOG "\n$key 标记理论P p到时时: $taup 没有返回有效结果";
     }
     # 直达横波到时
     if (($phase{S} != 0) and ($phase{s} != 0)) {
@@ -54,29 +57,30 @@ foreach my $key (keys %station) {
     }elsif ($phase{s} != 0) {
         $s = $phase{s};
     }else{
-        print LOG "$keys 标记理论S s到时时: $taup 没有返回有效结果\n";
+        print LOG "\n$key 标记理论S s到时时: $taup 没有返回有效结果";
     }
     # 首波到时
     if ($phase{Pn} != 0) {
         $pn = $phase{Pn};
     }
     # 执行标记
-    open(SAC, "| sac") or die "Error in opening SAC\n";
-    print SAC "wild echo off\n";
-    print SAC "r $keys.*.SAC\n";
-    if (definded($pn)) {
+    print SAC "r $key.*.SAC\n";
+    if (defined($pn)) {
         print SAC "ch t7 $pn\n";
+        print SAC "wh\n";
     }
-    if (definded($p)) {
+    if (defined($p)) {
         print SAC "ch t8 $p\n";
+        print SAC "wh\n";
     }
-    if (definded($s)) {
+    if (defined($s)) {
         print SAC "ch t9 $s\n";
+        print SAC "wh\n";
     }
-    print SAC "wh\n";
-    print SAC "q\n";
-    close(SAC);
+    
 }
+print SAC "q\n";
+close(SAC);
 
 print LOG "\n$0正常结束"; 
 close(LOG);

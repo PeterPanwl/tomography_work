@@ -17,23 +17,24 @@ foreach (glob "*.SAC") {
     $sets{"$net.$sta.$loc.$chn2"}++;
 }
 
-open(SAC, "|sac") or die "Error in opening sac\n";
+
 # 对所有的key做循环
 foreach my $key (keys %sets) {
+
     my ($E, $N, $Z, $R, $T, $Z0);
 
     # 检查三个分量是否都存在,任一分量若不存在，则跳过
     $Z = "${key}Z.SAC";
-    $E = "${key}Z.SAC";
+    $E = "${key}E.SAC";
     $N = "${key}N.SAC";
     if (!-e $Z) {
-        print LOG "\n#. $key?.SAC Z分量没有";
+        print LOG "\n#. $key 缺失Z分量";
     }
     if (!-e $E) {
-        print LOG "\n#. $key?.SAC E分量没有";
+        print LOG "\n#. $key 缺失E分量";
     }
     if (!-e $N) {
-        print LOG "\n#. $key?.SAC N分量没有";
+        print LOG "\n#. $key 缺失N分量";
     }
     if ((!-e $Z) or (!-e $E) or (!-e $N)){
         next;
@@ -57,18 +58,18 @@ foreach my $key (keys %sets) {
     $R = $prefix."R";
     $T = $prefix."T";
     $Z0 = $prefix."Z";
-
+    open(SAC, "|sac") or die "Error in opening sac\n";
     print SAC "cut $begin $end \n";
     print SAC "r $E $N \n";
     print SAC "rotate to gcp \n";
     print SAC "w $R $T \n";
     print SAC "r $Z \n";
     print SAC "w $Z0 \n";
-
-    unlink glob "${key}[NEZ].SAC";
+    print SAC "q\n";
+    close(SAC);
+    
+    unlink glob "$key?.SAC";
 }
-print SAC "q\n";
-close(SAC);
 
 print LOG "\n$0正常结束"; 
 close(LOG);
