@@ -17,6 +17,8 @@ foreach (<INFO>) {
     chomp($_);
     #yyyy-mm-ddThh:mm:ss.xxx evlo evla evdp mag
     system "perl eventinfo.pl $_";
+    last;
 }
 system "perl taup.pl";
+system "perl wave.pl";
 system "perl rotate.pl";
