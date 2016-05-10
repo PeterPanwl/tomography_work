@@ -14,11 +14,18 @@ system "perl merge.pl";
 system "perl rename.pl";
 open (INFO,'../info');
 foreach (<INFO>) {
-    chomp($_);
+    chomp;
     #yyyy-mm-ddThh:mm:ss.xxx evlo evla evdp mag
     system "perl eventinfo.pl $_";
     last;
 }
+close(<INFO>);
 system "perl taup.pl";
 system "perl wave.pl";
 system "perl rotate.pl";
+
+open(LOG, "< ../process.md") or die "Could not open file 'process.md' $!";
+foreach (<LOG>) {
+    print $_;
+}
+close(LOG);
