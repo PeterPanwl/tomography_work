@@ -19,7 +19,7 @@ foreach (<INFO>) {
     system "perl eventinfo.pl $_";
     last;
 }
-close(<INFO>);
+close(INFO);
 system "perl taup.pl";
 system "perl wave.pl";
 system "perl rotate.pl";
