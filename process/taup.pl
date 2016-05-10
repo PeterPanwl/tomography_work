@@ -5,7 +5,7 @@ use List::Util qw(min max);
 
 # 打开日志文件
 open(LOG, '>> ../process.md') or die "Could not open file 'process.md' $!";
-print LOG "\n\n## $0";
+print LOG "\n## $0\n";
 
 # 获取台站列表
 #利用hash的key的不可重复性构建集合:
@@ -47,7 +47,7 @@ foreach my $key (keys %station) {
     }elsif ($phase{p} != 0) {
         $p = $phase{p};
     }else{
-        print LOG "\n$key 标记理论P p到时时: $taup 没有返回有效结果";
+        print LOG "$key 标记理论P p到时时: $taup 没有返回有效结果\n";
     }
     # 直达横波到时
     if (($phase{S} != 0) and ($phase{s} != 0)) {
@@ -57,7 +57,7 @@ foreach my $key (keys %station) {
     }elsif ($phase{s} != 0) {
         $s = $phase{s};
     }else{
-        print LOG "\n$key 标记理论S s到时时: $taup 没有返回有效结果";
+        print LOG "$key 标记理论S s到时时: $taup 没有返回有效结果\n";
     }
     # 首波到时
     if ($phase{Pn} != 0) {
@@ -82,5 +82,5 @@ foreach my $key (keys %station) {
 print SAC "q\n";
 close(SAC);
 
-print LOG "\n$0正常结束"; 
+print LOG "$0正常结束\n"; 
 close(LOG);

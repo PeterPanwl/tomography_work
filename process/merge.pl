@@ -6,7 +6,7 @@ $ENV{SAC_DISPLAY_COPYRIGHT}=0;
 
 #打开日志文件
 open(LOG, '>> ../process.md') or die "Could not open file 'process.md' $!";
-print LOG "\n\n## $0";
+print LOG "\n## $0\n";
 
 # 利用hash的key的不可重复性构建集合:
 #   hash的key定义为 NET.STA.LOC.CHN
@@ -44,5 +44,5 @@ print SAC "q \n";
 close(SAC);
 unlink(@to_del);
 
-print LOG "\n$0正常结束"; 
+print LOG "$0正常结束\n"; 
 close(LOG);

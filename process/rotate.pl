@@ -5,7 +5,7 @@ use List::Util qw(min max);
 
 #打开日志文件
 open(LOG, '>> ../process.md') or die "Could not open file 'process.md' $!";
-print LOG "\n\n## $0";
+print LOG "\n## $0\n";
 
 # 利用hash的key的不可重复性构建集合:
 #   hash的key定义为 NET.STA.LOC.CH (分量信息不是BHZ而是BH)
@@ -28,13 +28,13 @@ foreach my $key (keys %sets) {
     $E = "${key}E.SAC";
     $N = "${key}N.SAC";
     if (!-e $Z) {
-        print LOG "\n#. $key 缺失Z分量";
+        print LOG "#. $key 缺失Z分量\n";
     }
     if (!-e $E) {
-        print LOG "\n#. $key 缺失E分量";
+        print LOG "#. $key 缺失E分量\n";
     }
     if (!-e $N) {
-        print LOG "\n#. $key 缺失N分量";
+        print LOG "#. $key 缺失N分量\n";
     }
     if ((!-e $Z) or (!-e $E) or (!-e $N)){
         next;
@@ -46,7 +46,7 @@ foreach my $key (keys %sets) {
     my (undef, $Eb, $Ee, $Edelta) = split " ", `saclst b e delta f $E`;
     my (undef, $Nb, $Ne, $Ndelta) = split " ", `saclst b e delta f $N`;
     if (($Zdelta != $Edelta) or ($Zdelta != $Ndelta)) {
-        print LOG "\n#. $key: delta not equal N:$Ndelta E:$Edelta Z:$Zdelta";
+        print LOG "#. $key: delta not equal N:$Ndelta E:$Edelta Z:$Zdelta\n";
         die "$key: delta not equal\n";
     }
     # 获取三分量里的最大B和最小E值作为数据窗
@@ -71,5 +71,5 @@ foreach my $key (keys %sets) {
     unlink glob "$key?.SAC";
 }
 
-print LOG "\n$0正常结束"; 
+print LOG "$0正常结束\n"; 
 close(LOG);
