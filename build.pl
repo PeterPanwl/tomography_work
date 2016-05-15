@@ -4,7 +4,6 @@ use warnings;
 
 my $catlogfile = 'Table1_complete.txt';
 
-
 chdir '../';
 open(DIR, '> ./directories') or die "Could not open file 'directories' $!";
 open(LOG, '> ./build.txt') or die "Could not open file 'build.txt' $!";
